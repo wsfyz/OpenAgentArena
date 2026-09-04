@@ -5,11 +5,12 @@ from __future__ import annotations
 import json
 import time
 import uuid
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Mapping, TextIO
+from typing import Any, TextIO
 
-from .core import Action, ArenaAgent, ArenaEnvironment, Observation
+from .core import Action, ArenaAgent, ArenaEnvironment
 
 
 @dataclass(frozen=True, slots=True)
