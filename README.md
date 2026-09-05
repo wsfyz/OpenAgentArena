@@ -6,7 +6,7 @@ OpenAgentArena evaluates agents by letting them act in shared, evolving environm
 
 > Status: **pre-alpha / protocol-first prototype**. The included `frontier` environment is a deliberately small ancient-strategy scenario used to validate the arena contract, deterministic replay, and metrics pipeline. It is not the product boundary.
 
-[简体中文](README.zh-CN.md) · [Product brief](docs/product-brief.md) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Agent adapters](docs/agent-adapters.md) · [Landscape](docs/landscape.md) · [Roadmap](docs/roadmap.md)
+[简体中文](README.zh-CN.md) · [Base-model battles](docs/base-model-battles.md) · [Product brief](docs/product-brief.md) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Agent adapters](docs/agent-adapters.md) · [Landscape](docs/landscape.md) · [Roadmap](docs/roadmap.md)
 
 ## Why this exists
 
@@ -60,6 +60,13 @@ Requires Python 3.11+.
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
+
+# Compare two API models under the same controlled agent template
+export GROQ_API_KEY="your-key"
+oaa battle examples/battle-groq-free.toml --check
+oaa battle examples/battle-groq-free.toml
+
+# Built-in non-AI demos
 oaa run --seed 7 --log runs/demo.jsonl
 oaa commons --seed 7 --log runs/commons.jsonl
 oaa tournament --seeds 1,2,3,4,5 --output-dir runs/tournament
