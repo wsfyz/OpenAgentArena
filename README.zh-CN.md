@@ -6,7 +6,7 @@ OpenAgentArena 不用固定题集考模型，而是让多个 Agent 在共享且�
 
 > 当前状态：**pre-alpha / 协议优先原型**。仓库内置的 `frontier` 是一个刻意做小的古代战略环境，用来验证实验场协议、确定性重放和评测链路；它不是平台的最终边界。
 
-[English](README.md) · [产品定义](docs/product-brief.md) · [系统架构](docs/architecture.md) · [评测设计](docs/evaluation.md) · [Agent 适配](docs/agent-adapters.md) · [竞品调研](docs/landscape.md) · [路线图](docs/roadmap.md)
+[English](README.md) · [基模对战](docs/base-model-battles.zh-CN.md) · [产品定义](docs/product-brief.md) · [系统架构](docs/architecture.md) · [评测设计](docs/evaluation.md) · [Agent 适配](docs/agent-adapters.md) · [竞品调研](docs/landscape.md) · [路线图](docs/roadmap.md)
 
 ## 为什么要做这个项目
 
@@ -60,6 +60,12 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 
+# 使用同一套受控 Agent 模板比较两个 API 模型
+export GROQ_API_KEY="你的Key"
+oaa battle examples/battle-groq-free.toml --check
+oaa battle examples/battle-groq-free.toml
+
+# 以下是不调用 AI 的内置演示
 # 运行一场两方战略对抗
 oaa run --seed 7 --log runs/demo.jsonl
 

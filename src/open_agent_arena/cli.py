@@ -13,6 +13,7 @@ from .agents import (
     GreedyFrontierAgent,
     RandomAgent,
 )
+from .battle import load_battle_config, missing_api_keys, run_base_model_battle
 from .core import AgentBudget, ArenaAgent
 from .environments import CommonsEnvironment, FrontierEnvironment
 from .replay import read_trace, verify_trace
@@ -54,6 +55,14 @@ def build_parser() -> argparse.ArgumentParser:
     replay = subparsers.add_parser("replay", help="generate a static replay viewer")
     replay.add_argument("trace")
     replay.add_argument("--output", default="runs/replay.html")
+
+    battle = subparsers.add_parser(
+        "battle", help="compare two API models with one controlled agent template"
+    )
+    battle.add_argument("config", help="path to a version 1 TOML battle config")
+    battle.add_argument(
+        "--check", action="store_true", help="validate config and API key presence only"
+    )
     return parser
 
 
@@ -62,6 +71,7 @@ def _add_budget_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--max-input-tokens", type=int)
     parser.add_argument("--max-output-tokens", type=int)
     parser.add_argument("--max-tool-calls", type=int)
+    parser.add_argument("--max-model-calls", type=int)
     parser.add_argument("--max-cost-usd", type=float)
 
 
@@ -71,6 +81,7 @@ def _budget(args: argparse.Namespace) -> AgentBudget:
         max_input_tokens=args.max_input_tokens,
         max_output_tokens=args.max_output_tokens,
         max_tool_calls=args.max_tool_calls,
+        max_model_calls=args.max_model_calls,
         max_cost_usd=args.max_cost_usd,
     )
 
@@ -156,6 +167,34 @@ def main() -> None:
     elif args.command == "replay":
         output = write_replay_html(args.trace, args.output)
         print(json.dumps({"replay": str(output)}, ensure_ascii=False, indent=2))
+    elif args.command == "battle":
+        config = load_battle_config(args.config)
+        missing = missing_api_keys(config)
+        if args.check:
+            print(
+                json.dumps(
+                    {
+                        "valid": not missing,
+                        "battle": config.name,
+                        "models": [model.name for model in config.models],
+                        "games": len(config.seeds) * 2,
+                        "missing_api_keys": missing,
+                    },
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
+            if missing:
+                raise SystemExit(2)
+        else:
+            summary, report = run_base_model_battle(config)
+            print(
+                json.dumps(
+                    {"standings": summary.standings, "report": str(report)},
+                    ensure_ascii=False,
+                    indent=2,
+                )
+            )
 
 
 if __name__ == "__main__":

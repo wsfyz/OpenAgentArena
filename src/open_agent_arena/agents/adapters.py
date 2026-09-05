@@ -79,6 +79,7 @@ class OpenAICompatibleAgent:
         input_cost_per_million: float = 0.0,
         output_cost_per_million: float = 0.0,
         system_prompt: str | None = None,
+        json_response_format: bool = True,
     ) -> None:
         self.model = model
         self.url = base_url.rstrip("/") + "/chat/completions"
@@ -87,16 +88,16 @@ class OpenAICompatibleAgent:
         self.temperature = temperature
         self.input_cost_per_million = input_cost_per_million
         self.output_cost_per_million = output_cost_per_million
+        self.json_response_format = json_response_format
         self.system_prompt = system_prompt or (
             "You are an arena agent. Return only JSON with keys 'kind' and optional "
             "'payload'. The kind must be one of observation.legal_actions."
         )
 
     def act(self, observation: Observation) -> AgentDecision:
-        body = {
+        body: dict[str, Any] = {
             "model": self.model,
             "temperature": self.temperature,
-            "response_format": {"type": "json_object"},
             "messages": [
                 {"role": "system", "content": self.system_prompt},
                 {
@@ -105,6 +106,8 @@ class OpenAICompatibleAgent:
                 },
             ],
         }
+        if self.json_response_format:
+            body["response_format"] = {"type": "json_object"}
         headers = {"Content-Type": "application/json"}
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
@@ -123,7 +126,7 @@ class OpenAICompatibleAgent:
             ) from exc
         try:
             message = result["choices"][0]["message"]
-            action_data = json.loads(message["content"])
+            action_data = _parse_json_content(message["content"])
         except (KeyError, IndexError, TypeError, json.JSONDecodeError) as exc:
             raise ValueError("model response did not contain a JSON action") from exc
         usage_data = result.get("usage", {})
@@ -147,6 +150,19 @@ class OpenAICompatibleAgent:
                 "provider_request_id": result.get("id"),
             },
         )
+
+
+def _parse_json_content(content: str) -> dict[str, Any]:
+    """Accept strict JSON plus the common fenced-JSON model response."""
+    cleaned = content.strip()
+    if cleaned.startswith("```") and cleaned.endswith("```"):
+        cleaned = cleaned[3:-3].strip()
+        if cleaned.lower().startswith("json"):
+            cleaned = cleaned[4:].lstrip()
+    value = json.loads(cleaned)
+    if not isinstance(value, dict):
+        raise TypeError("model action must be a JSON object")
+    return value
 
 
 def _parse_agent_response(raw: str) -> AgentDecision:

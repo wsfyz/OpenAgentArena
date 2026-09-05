@@ -1,0 +1,27 @@
+version = 1
+name = "openrouter-free-router-smoke-test"
+template = "base-model-v1"
+seeds = [1]
+output_dir = "runs/openrouter-free-smoke-test"
+
+[environment]
+id = "frontier-v0"
+max_turns = 4
+
+[budget]
+decision_timeout_ms = 45000
+max_model_calls = 4
+max_input_tokens = 16000
+max_output_tokens = 3000
+
+# The free router may select different underlying models between calls. This example tests the
+# product pipeline, not a scientifically controlled model-to-model comparison.
+[[models]]
+name = "openrouter-free-a"
+provider = "openrouter"
+model = "openrouter/free"
+
+[[models]]
+name = "openrouter-free-b"
+provider = "openrouter"
+model = "openrouter/free"
