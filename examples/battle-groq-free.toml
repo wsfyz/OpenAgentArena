@@ -1,0 +1,25 @@
+version = 1
+name = "groq-free-smoke-test"
+template = "base-model-v1"
+seeds = [1]
+output_dir = "runs/groq-free-smoke-test"
+
+[environment]
+id = "frontier-v0"
+max_turns = 6
+
+[budget]
+decision_timeout_ms = 30000
+max_model_calls = 6
+max_input_tokens = 20000
+max_output_tokens = 4000
+
+[[models]]
+name = "gpt-oss-20b"
+provider = "groq"
+model = "openai/gpt-oss-20b"
+
+[[models]]
+name = "qwen3.8-27b"
+provider = "groq"
+model = "qwen/qwen3.8-27b"
