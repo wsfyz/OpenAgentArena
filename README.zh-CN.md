@@ -6,7 +6,7 @@ OpenAgentArena 不用固定题集考模型，而是让多个 Agent 在共享且�
 
 > 当前状态：**pre-alpha / 协议优先原型**。仓库内置的 `frontier` 是一个刻意做小的古代战略环境，用来验证接口、确定性重放和评测链路；它不是平台的最终形态。
 
-[English](README.md) · [产品定义](docs/product-brief.md) · [系统架构](docs/architecture.md) · [评测设计](docs/evaluation.md) · [竞品调研](docs/landscape.md) · [路线图](docs/roadmap.md)
+[English](README.md) · [产品定义](docs/product-brief.md) · [系统架构](docs/architecture.md) · [评测设计](docs/evaluation.md) · [Agent 适配](docs/agent-adapters.md) · [竞品调研](docs/landscape.md) · [路线图](docs/roadmap.md)
 
 ## 核心判断
 
@@ -42,8 +42,19 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 oaa run --seed 7 --log runs/demo.jsonl
+oaa commons --seed 7 --log runs/commons.jsonl
+oaa tournament --seeds 1,2,3,4,5 --output-dir runs/tournament
+oaa verify runs/demo.jsonl
+oaa replay runs/demo.jsonl --output runs/replay.html
 pytest
 ```
+
+当前原型已支持配对种子、双向换位循环赛、Elo、Token/工具/费用/超时遥测、预算执行、
+离线确定性验真，以及无需服务端的排行榜和对局回放 HTML。模型可通过 OpenAI 兼容接口接入，
+其他语言的 Agent 可通过 JSON stdin/stdout 子进程协议接入。
+
+仓库现在包含两种不同博弈形态：`frontier-v0` 是两方公开状态战略对抗；`commons-v0` 是三方、
+局部可观测的公共资源困境，能观察合作、搭便车与集体崩溃，避免平台被古代战争单一形态绑定。
 
 ## 首个有效里程碑
 
