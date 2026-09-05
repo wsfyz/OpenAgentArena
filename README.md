@@ -48,7 +48,9 @@ Agent adapters                 Arena control plane
                   rules + hidden state replay/artifacts   reports/leaderboard
 ```
 
-The local prototype uses an in-process Python interface. The same contract is intended to gain HTTP/WebSocket and container adapters without changing environment semantics.
+The local prototype supports trusted in-process Python, OpenAI-compatible model endpoints, and a
+language-neutral subprocess adapter. HTTP/WebSocket and restricted container adapters can be added
+without changing environment semantics.
 
 ## Quick start
 
