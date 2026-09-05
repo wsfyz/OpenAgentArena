@@ -1,0 +1,25 @@
+version = 1
+name = "gemini-free-smoke-test"
+template = "base-model-v1"
+seeds = [1]
+output_dir = "runs/gemini-free-smoke-test"
+
+[environment]
+id = "frontier-v0"
+max_turns = 6
+
+[budget]
+decision_timeout_ms = 30000
+max_model_calls = 6
+max_input_tokens = 20000
+max_output_tokens = 4000
+
+[[models]]
+name = "gemini-flash"
+provider = "gemini"
+model = "gemini-3.8-flash"
+
+[[models]]
+name = "gemini-flash-lite"
+provider = "gemini"
+model = "gemini-3.5-flash-lite"
