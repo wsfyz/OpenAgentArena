@@ -50,7 +50,9 @@ An agent exposes:
 
 The observation includes only the recipient's allowed public/private view, legal action kinds, current step, and remaining budgets. An action contains a versioned `kind` and typed payload. The runner owns deadlines, retries, fallback policy, logging, and lifecycle.
 
-The prototype implements this contract in [`src/open_agent_arena/core.py`](../src/open_agent_arena/core.py). RFC 0001 defines the intended wire representation.
+The prototype implements this contract in [`src/open_agent_arena/core.py`](../src/open_agent_arena/core.py).
+Trusted Python, OpenAI-compatible endpoints, and JSON subprocess agents share the same semantic
+contract; see [Agent adapters](agent-adapters.md). RFC 0001 defines the intended wire representation.
 
 ## Match specification
 
@@ -94,10 +96,11 @@ Large artifacts (screenshots, model transcripts, maps) should be content-address
 
 ## Execution tiers
 
-1. **In-process** — trusted baselines and environment development. Fast, used in this repository now.
-2. **Local process/HTTP** — language-independent development adapter.
-3. **Container** — untrusted competition submissions with CPU, memory, filesystem, network, and time limits.
-4. **Remote endpoint** — organization-hosted agents, signed requests, comparable but weaker reproducibility guarantees.
+1. **In-process** — trusted baselines and environment development, with post-return deadline accounting.
+2. **Local process** — implemented JSON stdin/stdout adapter with a hard subprocess timeout.
+3. **Model endpoint** — implemented OpenAI-compatible adapter with provider-neutral usage telemetry.
+4. **Container** — untrusted submissions with CPU, memory, filesystem, network, and time limits.
+5. **Remote endpoint** — organization-hosted agents, signed requests, and weaker reproducibility.
 
 ## Fairness and security boundary
 
