@@ -1,10 +1,24 @@
 """OpenAgentArena public interfaces."""
 
-from .core import Action, ArenaAgent, ArenaEnvironment, Observation, StepResult
+from .core import (
+    Action,
+    AgentBudget,
+    AgentDecision,
+    AgentTimeoutError,
+    AgentUsage,
+    ArenaAgent,
+    ArenaEnvironment,
+    Observation,
+    StepResult,
+)
 from .runner import MatchRunner, MatchSummary
 
 __all__ = [
     "Action",
+    "AgentBudget",
+    "AgentDecision",
+    "AgentTimeoutError",
+    "AgentUsage",
     "ArenaAgent",
     "ArenaEnvironment",
     "MatchRunner",
@@ -13,4 +27,4 @@ __all__ = [
     "StepResult",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

@@ -79,4 +79,12 @@ The runner returns an action receipt describing accepted, normalized, rejected, 
 
 ## Compatibility
 
-The Python prototype is semantically aligned but not yet the normative wire implementation. A future conformance suite must validate serialization, hidden-state isolation, deadline behavior, idempotency, and trace completeness across transports.
+The Python prototype now implements the observe/act subset as `arena.agent-request/v1` for the
+subprocess adapter. An adapter may return a bare action or an envelope containing action, usage,
+and metadata. The runner owns the authoritative stopwatch and cumulative budget counters. Usage is
+charged before limit evaluation; late or over-budget decisions become declared fallback actions and
+remain visible in `arena.trace/v1` telemetry.
+
+Initialization, receipts, retry semantics, shutdown, and idempotency remain draft. A future
+conformance suite must validate serialization, hidden-state isolation, deadline behavior,
+idempotency, and trace completeness across transports.

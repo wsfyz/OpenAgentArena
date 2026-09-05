@@ -32,3 +32,26 @@ class GreedyFrontierAgent:
         if "fortify" in legal and own["walls"] < 3:
             return Action("fortify")
         return Action("harvest")
+
+
+class CommonsCooperatorAgent:
+    """Protect the shared resource while maintaining a small private reserve."""
+
+    def act(self, observation: Observation) -> Action:
+        commons = observation.public_state["commons"]
+        reserve = observation.private_state["reserve"]
+        turns_until_storm = (3 - observation.turn % 3) % 3
+        if turns_until_storm == 1 and "guard" in observation.legal_actions:
+            return Action("guard")
+        if commons < 16 and reserve >= 2 and "contribute" in observation.legal_actions:
+            return Action("contribute")
+        if reserve < 3:
+            return Action("harvest")
+        return Action("observe")
+
+
+class CommonsFreeRiderAgent:
+    """Maximize immediate private extraction from the shared resource."""
+
+    def act(self, observation: Observation) -> Action:
+        return Action("harvest")

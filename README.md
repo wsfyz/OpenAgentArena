@@ -6,7 +6,7 @@ OpenAgentArena evaluates agents by letting them act in shared, evolving environm
 
 > Status: **pre-alpha / protocol-first prototype**. The included `frontier` environment is a deliberately small ancient-strategy scenario used to validate the arena contract, deterministic replay, and metrics pipeline. It is not the product boundary.
 
-[简体中文](README.zh-CN.md) · [Product brief](docs/product-brief.md) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Landscape](docs/landscape.md) · [Roadmap](docs/roadmap.md)
+[简体中文](README.zh-CN.md) · [Product brief](docs/product-brief.md) · [Architecture](docs/architecture.md) · [Evaluation](docs/evaluation.md) · [Agent adapters](docs/agent-adapters.md) · [Landscape](docs/landscape.md) · [Roadmap](docs/roadmap.md)
 
 ## Why this exists
 
@@ -59,6 +59,10 @@ python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
 oaa run --seed 7 --log runs/demo.jsonl
+oaa commons --seed 7 --log runs/commons.jsonl
+oaa tournament --seeds 1,2,3,4,5 --output-dir runs/tournament
+oaa verify runs/demo.jsonl
+oaa replay runs/demo.jsonl --output runs/replay.html
 pytest
 ```
 
@@ -78,13 +82,29 @@ Example output:
 ```text
 src/open_agent_arena/
   core.py                  # stable agent/environment data contract
-  runner.py                # orchestration and event trace
+  runner.py                # orchestration, budgets, telemetry, event trace
+  tournament.py            # paired seeds, seat swaps, round robin, Elo
+  replay.py                # offline deterministic trace verification
+  reporting.py             # static leaderboard and replay viewer
+  agents/adapters.py       # OpenAI-compatible and subprocess agents
   agents/baselines.py      # random and heuristic reference agents
   environments/frontier.py # first deterministic strategy probe
+  environments/commons.py  # three-agent cooperation/competition probe
 docs/                      # product, architecture, evaluation, research, roadmap
 rfcs/0001-arena-protocol.md
 tests/
 ```
+
+## Implemented evaluation loop
+
+The local prototype now runs paired-seed, seat-swapped round robins; records latency, tokens,
+model/tool calls, cost, timeouts, and budget exhaustion; verifies scored traces by re-executing the
+environment; and emits dependency-free HTML leaderboard and replay artifacts. The provided Elo is
+a convenient live view, not a substitute for the immutable match set.
+
+`frontier-v0` tests two-player adversarial planning with full public state. `commons-v0` tests three
+agents under partial observability, private reserves, shared-resource collapse, cooperation, and
+free-riding. Together they keep the platform contract independent from a single game shape.
 
 ## Near-term milestone
 
