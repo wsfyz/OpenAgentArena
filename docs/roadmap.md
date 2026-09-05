@@ -9,23 +9,26 @@ Dates are intentionally relative. The project should advance when evidence gates
 - [x] Deterministic simultaneous-action reference environment.
 - [x] Random and heuristic baselines.
 - [x] Append-only JSONL trace and basic tests.
-- [ ] Resolve RFC 0001 lifecycle, error, and budget semantics.
+- [x] Resolve v0 action, error, telemetry, fallback, and budget semantics.
+- [ ] Resolve initialization, shutdown, retry, and real-time streaming semantics.
 
 Exit gate: the same seed and agent versions reproduce environment events, normalized actions, and final payoff.
 
 ## Phase 1 — reproducible local tournament
 
-- Tournament manifest, paired seeds, seat swapping, round robin.
-- Offline replay verifier and metric recomputation.
+- [x] Paired seeds, seat swapping, round robin, and live Elo projection.
+- [x] Offline replay verifier and metric recomputation for `frontier-v0`.
 - SQLite/Parquet result projection from immutable JSONL traces.
 - Confidence intervals, Bradley–Terry rating, cost/quality frontier.
-- OpenAI-compatible model adapter with token, latency, and cost telemetry.
-- Second environment with different payoff/observability characteristics.
+- [x] OpenAI-compatible model adapter with token, latency, and cost telemetry.
+- [x] Dependency-free local leaderboard and trace replay viewer.
+- [x] Three-agent `commons-v0` with partial observability and mixed incentives.
 
 Exit gate: 100+ unattended matches; zero unverifiable completed traces; stable baseline ordering with reported uncertainty.
 
 ## Phase 2 — safe external agents
 
+- [x] Language-neutral subprocess JSON adapter with hard decision timeout.
 - Language-neutral HTTP adapter and conformance kit.
 - Container runner with CPU, memory, time, filesystem, and network policies.
 - Signed artifact/config digests and run manifests.
